@@ -1,0 +1,45 @@
+id: pagila-bronze-full
+namespace: prod.pagila
+
+variables:
+  DATASET: pagila
+  GCS_ZONE: "{{ secret('GCS_BUCKET') }}/bronze"
+  TABLES: [
+    "actor", "address", "category", "city", "country", "customer", "film", "film_actor", "film_category", "inventory", "language", "staff", "store"
+    ]
+
+tasks:
+  - id: full_refresh
+    type: io.kestra.plugin.core.flow.ForEach
+    values: "{{ render(vars.TABLES) }}"
+    tasks:
+      - id: extract
+        type: io.kestra.plugin.jdbc.postgresql.CopyOut
+        url: jdbc:postgresql://{{ secret('PG_HOST') }}/{{ render(vars.DATASET) }}?currentSchema=public
+        username: "{{ secret('PG_USER') }}"
+        password: "{{ secret('PG_PASSWORD') }}"
+        format: CSV
+        header: true
+        delimiter: ","
+        sql: SELECT * FROM {{ taskrun.value }}
+
+      - id: parquet_write
+        type: io.kestra.plugin.jdbc.duckdb.Query
+        inputFiles:
+          in.csv: "{{ outputs.extract[taskrun.value].uri }}"
+        outputFiles:
+          - out
+        sql: |
+          COPY (SELECT * FROM read_csv_auto('{{ workingDir }}/in.csv', header=True)) 
+          TO '{{ outputFiles.out }}' (FORMAT PARQUET, CODEC SNAPPY);
+
+      - id: load
+        type: io.kestra.plugin.gcp.gcs.Upload
+        from: "{{ outputs.parquet_write[taskrun.value].outputFiles.out }}"
+        to: "gs://{{ render(vars.GCS_ZONE) }}/{{ render(vars.DATASET) }}/{{ taskrun.value }}/{{ taskrun.value }}.parquet"
+
+triggers:
+  - id: daily
+    type: io.kestra.plugin.core.trigger.Schedule
+    timezone: Asia/Jakarta
+    cron: 0 7 * * *
