@@ -1,0 +1,57 @@
+id: pagila-bronze-init-incr
+namespace: prod.pagila
+
+variables:
+  DATASET: pagila
+  GCS_ZONE: "{{ secret('GCS_BUCKET') }}/bronze"
+  YEARS: [2022]
+  MONTHS: ["01", "02", "03", "04", "05", "06"]
+
+inputs:
+  - id: table
+    type: SELECT
+    defaults: payment
+    values:
+      - payment
+      - rental
+  - id: date
+    type: STRING
+    defaults: payment_date
+
+tasks:
+  - id: loop_years
+    type: io.kestra.plugin.core.flow.ForEach
+    values: "{{ render(vars.YEARS) }}"
+    tasks:
+      - id: loop_months
+        type: io.kestra.plugin.core.flow.ForEach
+        values: "{{ render(vars.MONTHS) }}"
+        tasks:
+          - id: extract
+            type: io.kestra.plugin.jdbc.postgresql.CopyOut
+            url: jdbc:postgresql://{{ secret('PG_HOST') }}/{{ render(vars.DATASET) }}?currentSchema=public
+            username: "{{ secret('PG_USER') }}"
+            password: "{{ secret('PG_PASSWORD') }}"
+            format: CSV
+            header: true
+            delimiter: ","
+            sql: |
+              SELECT *
+              FROM {{ inputs.table }}
+              WHERE EXTRACT(YEAR FROM {{ inputs.date }}) = {{ parent.taskrun.value }}
+                AND EXTRACT(MONTH FROM {{ inputs.date }}) = {{ taskrun.value | number('FLOAT') }}
+
+          - id: parquet_write
+            type: io.kestra.plugin.jdbc.duckdb.Query
+            inputFiles:
+              in.csv: "{{ outputs.extract[parent.taskrun.value][taskrun.value].uri }}"
+            outputFiles:
+              - out
+            sql: |
+              COPY (SELECT * FROM read_csv_auto('{{ workingDir }}/in.csv', header=True)) 
+              TO '{{ outputFiles.out }}' (FORMAT PARQUET, CODEC SNAPPY);
+
+          - id: load
+            type: io.kestra.plugin.gcp.gcs.Upload
+            from: "{{ outputs.parquet_write[parent.taskrun.value][taskrun.value].outputFiles.out }}"
+            to: "gs://{{ render(vars.GCS_ZONE) }}/{{ render(vars.DATASET) }}/{{ inputs.table }}/year={{ parent.taskrun.value }}/{{ inputs.table }}_{{ parent.taskrun.value }}_{{ taskrun.value }}.parquet"
