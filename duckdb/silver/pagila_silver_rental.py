@@ -8,10 +8,10 @@ con.register_filesystem(filesystem("gcs"))
 con.execute(f"""
   COPY (
     SELECT
-      rental_id,
-      inventory_id,
-      customer_id,
-      staff_id,
+      rental_id::INTEGER AS rental_id,
+      inventory_id::INTEGER AS inventory_id,
+      customer_id::INTEGER AS customer_id,
+      staff_id::INTEGER AS staff_id,
       rental_date::TIMESTAMPTZ AS rented_at,
       return_date::TIMESTAMPTZ AS returned_at,
       last_update::TIMESTAMPTZ AS updated_at,
