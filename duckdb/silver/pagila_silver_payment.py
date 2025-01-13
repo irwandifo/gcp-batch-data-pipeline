@@ -9,8 +9,8 @@ con.execute(f"""
   COPY (
     SELECT
       payment_id::INTEGER AS payment_id,
-      customer_id::SMALLINT AS customer_id,
-      staff_id::SMALLINT AS staff_id,
+      customer_id::INTEGER AS customer_id,
+      staff_id::INTEGER AS staff_id,
       rental_id::INTEGER AS rental_id,
       amount::NUMERIC(5, 2) AS amount,
       payment_date::TIMESTAMPTZ AS paid_at,
