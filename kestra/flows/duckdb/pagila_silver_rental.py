@@ -1,0 +1,23 @@
+import duckdb
+from os import getenv
+from fsspec import filesystem
+
+con = duckdb.connect(":memory:")
+con.register_filesystem(filesystem("gcs"))
+
+con.execute(f"""
+  COPY (
+    SELECT
+      rental_id,
+      inventory_id,
+      customer_id,
+      staff_id,
+      rental_date::TIMESTAMPTZ AS rented_at,
+      return_date::TIMESTAMPTZ AS returned_at,
+      last_update::TIMESTAMPTZ AS updated_at,
+      current_timestamp::TIMESTAMPTZ AS loaded_at
+    FROM read_parquet('{getenv('GCS_URI')}')
+  ) TO 'out.parquet' (FORMAT PARQUET, CODEC SNAPPY)
+""")
+
+con.close()
