@@ -16,7 +16,7 @@ con.execute(f"""
       return_date::TIMESTAMPTZ AS returned_at,
       last_update::TIMESTAMPTZ AS updated_at,
       current_timestamp::TIMESTAMPTZ AS loaded_at
-    FROM read_parquet('{getenv('GCS_URI')}')
+    FROM read_parquet('{getenv('GCS_PREFIX')}/rental/*.parquet')
   ) TO 'out.parquet' (FORMAT PARQUET, CODEC SNAPPY)
 """)
 
