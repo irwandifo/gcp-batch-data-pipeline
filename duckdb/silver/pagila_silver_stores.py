@@ -5,6 +5,8 @@ from fsspec import filesystem
 con = duckdb.connect(":memory:")
 con.register_filesystem(filesystem("gcs"))
 
+GCS_PREFIX = getenv("GCS_PREFIX")
+
 con.execute(f"""
   COPY (
     SELECT
@@ -18,12 +20,12 @@ con.execute(f"""
       co.country,
       s.last_update::TIMESTAMPTZ AS updated_at,
       current_timestamp::TIMESTAMPTZ AS loaded_at
-    FROM read_parquet('{getenv('GCS_PREFIX')}/store/*.parquet') s
-    LEFT JOIN read_parquet('{getenv('GCS_PREFIX')}/address/*.parquet') a
+    FROM read_parquet('{GCS_PREFIX}/store/*.parquet') s
+    LEFT JOIN read_parquet('{GCS_PREFIX}/address/*.parquet') a
       ON s.address_id = a.address_id
-    LEFT JOIN read_parquet('{getenv('GCS_PREFIX')}/city/*.parquet') ci
+    LEFT JOIN read_parquet('{GCS_PREFIX}/city/*.parquet') ci
       ON a.city_id = ci.city_id
-    LEFT JOIN read_parquet('{getenv('GCS_PREFIX')}/country/*.parquet') co
+    LEFT JOIN read_parquet('{GCS_PREFIX}/country/*.parquet') co
       ON ci.country_id = co.country_id
   ) TO 'out.parquet' (FORMAT PARQUET, CODEC SNAPPY)
 """)
