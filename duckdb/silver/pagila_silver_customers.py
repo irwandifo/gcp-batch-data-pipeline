@@ -5,7 +5,7 @@ from fsspec import filesystem
 con = duckdb.connect(":memory:")
 con.register_filesystem(filesystem("gcs"))
 
-GCS_PREFIX = getenv('GCS_PREFIX')
+GCS_PREFIX = getenv("GCS_PREFIX")
 
 con.execute(f"""
   COPY (
