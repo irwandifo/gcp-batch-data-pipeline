@@ -17,10 +17,10 @@ con.execute(f"""
       f.rating,
       f.rental_rate,
       f.replacement_cost,
-      string_agg(c.name, ', ') AS categories,
-      string_agg(concat(a.first_name, ' ', a.last_name), ', ') AS actors,
       f.last_update::TIMESTAMPTZ AS updated_at,
-      current_timestamp::TIMESTAMPTZ AS loaded_at
+      current_timestamp::TIMESTAMPTZ AS loaded_at,
+      string_agg(c.name, ', ') AS categories,
+      string_agg(concat(a.first_name, ' ', a.last_name), ', ') AS actors
     FROM read_parquet('{GCS_PREFIX}/film/*.parquet') f
     LEFT JOIN read_parquet('{GCS_PREFIX}/film_category/*.parquet') fc
       ON f.film_id = fc.film_id
@@ -30,6 +30,8 @@ con.execute(f"""
       ON f.film_id = fa.film_id
     LEFT JOIN read_parquet('{GCS_PREFIX}/actor/*.parquet') a
       ON fa.actor_id = a.actor_id
+    GROUP BY 
+      1,2,3,4,5,6,7,8,9
   ) TO 'out.parquet' (FORMAT PARQUET, CODEC SNAPPY)
 """)
 
