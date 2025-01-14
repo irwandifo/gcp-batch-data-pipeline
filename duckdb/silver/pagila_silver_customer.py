@@ -23,7 +23,7 @@ con.execute(f"""
       cu.last_update::TIMESTAMPTZ AS updated_at
     FROM read_parquet('{getenv('GCS_PREFIX')}/customer/*.parquet') cu
     LEFT JOIN read_parquet('{getenv('GCS_PREFIX')}/address/*.parquet') a
-      ON c.address_id = a.address_id
+      ON cu.address_id = a.address_id
     LEFT JOIN read_parquet('{getenv('GCS_PREFIX')}/city/*.parquet') ci
       ON a.city_id = ci.city_id
     LEFT JOIN read_parquet('{getenv('GCS_PREFIX')}/country/*.parquet') co
