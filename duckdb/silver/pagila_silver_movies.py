@@ -27,7 +27,7 @@ con.execute(f"""
     LEFT JOIN read_parquet('{GCS_PREFIX}/category/*.parquet') c
       ON fc.category_id = c.category_id
     LEFT JOIN read_parquet('{GCS_PREFIX}/film_actor/*.parquet') fa
-      ON f.film_id = fa.country_id
+      ON f.film_id = fa.film_id
     LEFT JOIN read_parquet('{GCS_PREFIX}/actor/*.parquet') a
       ON fa.actor_id = a.actor_id
   ) TO 'out.parquet' (FORMAT PARQUET, CODEC SNAPPY)
