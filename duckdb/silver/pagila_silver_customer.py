@@ -10,7 +10,7 @@ con.execute(f"""
     SELECT
       cu.customer_id::INTEGER AS customer_id,
       cu.store_id::INTEGER AS store_id,
-      concat(cu.first_name, ' ', cu.last_name) AS full_name,
+      concat(cu.first_name, ' ', cu.last_name) AS name,
       cu.email,
       a.phone::STRING AS phone,
       a.address,
@@ -20,7 +20,8 @@ con.execute(f"""
       co.country,
       cu.activebool AS is_active,
       cu.create_date::TIMESTAMPTZ AS created_at,
-      cu.last_update::TIMESTAMPTZ AS updated_at
+      cu.last_update::TIMESTAMPTZ AS updated_at,
+      current_timestamp::TIMESTAMPTZ AS loaded_at
     FROM read_parquet('{getenv('GCS_PREFIX')}/customer/*.parquet') cu
     LEFT JOIN read_parquet('{getenv('GCS_PREFIX')}/address/*.parquet') a
       ON cu.address_id = a.address_id
