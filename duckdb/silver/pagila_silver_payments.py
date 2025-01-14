@@ -5,6 +5,8 @@ from fsspec import filesystem
 con = duckdb.connect(":memory:")
 con.register_filesystem(filesystem("gcs"))
 
+GCS_PREFIX = getenv("GCS_PREFIX")
+
 con.execute(f"""
   COPY (
     SELECT
@@ -15,7 +17,7 @@ con.execute(f"""
       amount::NUMERIC(5, 2) AS amount,
       payment_date::TIMESTAMPTZ AS paid_at,
       current_timestamp::TIMESTAMPTZ AS loaded_at
-    FROM read_parquet('{getenv('GCS_PREFIX')}/payment/*/*.parquet')
+    FROM read_parquet('{GCS_PREFIX}/payment/*/*.parquet')
   ) TO 'out.parquet' (FORMAT PARQUET, CODEC SNAPPY)
 """)
 
