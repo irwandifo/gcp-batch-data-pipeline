@@ -11,13 +11,13 @@ con.execute(f"""
   COPY (
     SELECT
       a.address_id::INTEGER AS address_id,
-      a.address,
-      a.address2,
+      sha256(a.address) AS address,
+      sha256(a.address2) AS address2,
       a.district,
       a.postal_code::STRING AS zip_code,
       ci.city,
       co.country,
-      a.phone::STRING AS phone,
+      sha256(a.phone::STRING) AS phone,
       a.last_update::TIMESTAMPTZ AS updated_at,
       a.loaded_at::TIMESTAMPTZ AS loaded_at
     FROM read_parquet('{GCS_PREFIX}/address/*.parquet') a
