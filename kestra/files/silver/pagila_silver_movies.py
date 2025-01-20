@@ -17,7 +17,8 @@ con.execute(f"""
       rental_duration,
       length::INTEGER AS length,
       rating::STRING AS rating,
-      special_features::ARRAY AS special_features,
+      special_features
+      array[replace(replace(special_features, '{', ''), '}', '')] AS special_features,
       rental_rate::NUMERIC(4, 2) AS rental_rate,
       replacement_cost::NUMERIC(5, 2) AS replacement_cost,
       last_update::TIMESTAMPTZ AS updated_at,
