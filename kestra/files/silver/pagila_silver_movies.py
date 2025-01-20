@@ -17,7 +17,7 @@ con.execute(f"""
       rental_duration,
       length::INTEGER AS length,
       rating::STRING AS rating,
-      split(REGEXP_REPLACE(special_features, '[{}"]', ''), ',')::STRING[] AS special_features,
+      split(regexp_replace(special_features, '[{}"]', ''), ',')::STRING[] AS special_features,
       rental_rate::NUMERIC(4, 2) AS rental_rate,
       replacement_cost::NUMERIC(5, 2) AS replacement_cost,
       last_update::TIMESTAMPTZ AS updated_at,
