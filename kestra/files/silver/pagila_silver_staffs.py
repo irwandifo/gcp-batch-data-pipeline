@@ -13,7 +13,7 @@ con.execute(f"""
       staff_id::INTEGER AS staff_id,
       store_id::INTEGER AS store_id,
       address_id::INTEGER AS address_id,
-      md5(concat(first_name, ' ', last_name)) AS name,
+      concat(first_name, ' ', last_name) AS name,
       md5(email) AS email,
       active AS is_active,
       last_update::TIMESTAMPTZ AS updated_at,
