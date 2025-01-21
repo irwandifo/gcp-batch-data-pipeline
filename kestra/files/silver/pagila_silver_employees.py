@@ -13,8 +13,8 @@ con.execute(f"""
       staff_id::INTEGER AS staff_id,
       store_id::INTEGER AS store_id,
       address_id::INTEGER AS address_id,
-      sha256(concat(first_name, ' ', last_name)) AS name,
-      sha256(email) AS email,
+      md5(concat(first_name, ' ', last_name)) AS name,
+      md5(email) AS email,
       active AS is_active,
       last_update::TIMESTAMPTZ AS updated_at,
       loaded_at::TIMESTAMPTZ AS loaded_at
