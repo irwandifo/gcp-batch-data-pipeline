@@ -1,5 +1,5 @@
 id: pagila-bronze-init-incr
-namespace: prod.pagila
+namespace: prod.pagila.bronze
 
 variables:
   DATASET: pagila
@@ -15,8 +15,11 @@ inputs:
       - payment
       - rental
   - id: date
-    type: STRING
+    type: SELECT
     defaults: payment_date
+    values:
+      - payment_date
+      - rental_date
 
 tasks:
   - id: loop_years
@@ -36,7 +39,8 @@ tasks:
             header: true
             delimiter: ","
             sql: |
-              SELECT *
+              SELECT *,
+                current_timestamp AS loaded_at
               FROM {{ inputs.table }}
               WHERE EXTRACT(YEAR FROM {{ inputs.date }}) = {{ parent.taskrun.value }}
                 AND EXTRACT(MONTH FROM {{ inputs.date }}) = {{ taskrun.value | number('FLOAT') }}
