@@ -1,5 +1,5 @@
 id: pagila-bronze-init-incr
-namespace: prod.pagila.bronze
+namespace: dev.pagila.bronze
 
 variables:
   DATASET: pagila
