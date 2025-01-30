@@ -1,0 +1,50 @@
+id: pagila-silver-quality-check
+namespace: dev.pagila.silver
+
+variables:
+  DATASET: pagila_silver
+  PROJECT: "{{ secret('GCP_PROJECT') }}"
+
+tasks:
+  - id: data_quality_check
+    type: io.kestra.plugin.soda.Scan
+    requirements:
+      - soda-core-bigquery
+    configuration:
+      data_source kestra:
+        type: bigquery
+        connection:
+          project_id: "{{ render(vars.PROJECT) }}"
+          dataset: "{{ render(vars.DATASET) }}"
+    checks:
+      checks for addresses:
+        - duplicate_count(address_id) = 0
+      checks for customers:
+        - duplicate_count(customer_id) = 0
+        - values in (store_id) must exist in stores (store_id)
+        - values in (address_id) must exist in addresses (address_id)
+      checks for rentals:
+        - duplicate_count(rental_id) = 0
+        - values in (inventory_id) must exist in inventories (inventory_id)
+        - values in (customer_id) must exist in customers (customer_id)
+        - values in (staff_id) must exist in staffs (staff_id)
+      checks for payments:
+        - duplicate_count(payment_id) = 0
+        - max(amount) > 0
+        - values in (customer_id) must exist in customers (customer_id)
+        - values in (staff_id) must exist in staffs (staff_id)
+      checks for stores:
+        - duplicate_count(store_id) = 0
+        - missing_count(manager_staff_id) = 0
+        - values in (address_id) must exist in addresses (address_id)
+        - values in (manager_staff_id) must exist in staffs (staff_id)
+
+triggers:
+  - id: upstream_dependancy
+    type: io.kestra.plugin.core.trigger.Flow
+    preconditions:
+      id: flow_trigger
+      flows:
+        - namespace: dev.pagila.silver
+          flowId: pagila-silver-init
+          states: [SUCCESS]

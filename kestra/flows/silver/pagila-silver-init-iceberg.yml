@@ -1,0 +1,54 @@
+id: pagila-silver-init-iceberg
+namespace: dev.pagila.silver
+
+variables:
+  DATASET: pagila
+  PROJECT: "{{ secret('GCP_PROJECT') }}"
+  GCS_PREFIX: "{{ secret('GCS_BUCKET') }}/silver"
+
+tasks:
+  - id: create_iceberg_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    projectId: "{{ render(vars.PROJECT) }}"
+    location: asia-southeast2
+    sql: |
+      -- payments
+      CREATE OR REPLACE TABLE pagila_silver.payments (
+        payment_id INTEGER,
+        rental_id INTEGER,
+        customer_id INTEGER,
+        staff_id INTEGER,
+        amount NUMERIC,
+        paid_at TIMESTAMP,
+        loaded_at TIMESTAMP
+      )
+      CLUSTER BY 
+        payment_id,
+        rental_id,
+        customer_id
+      WITH CONNECTION `asia-southeast2.biglake`
+      OPTIONS (
+      file_format = 'PARQUET',
+      table_format = 'ICEBERG',
+      storage_uri = 'gs://{{ render(vars.GCS_PREFIX) }}/{{ render(vars.DATASET) }}/payments');
+
+
+      -- rentals
+      CREATE OR REPLACE TABLE pagila_silver.rentals (
+        rental_id INTEGER,
+        inventory_id INTEGER,
+        customer_id INTEGER,
+        staff_id INTEGER,
+        rented_at TIMESTAMP,
+        returned_at TIMESTAMP,
+        updated_at TIMESTAMP,
+        loaded_at TIMESTAMP
+      )
+      CLUSTER BY 
+        rental_id,
+        customer_id
+      WITH CONNECTION `asia-southeast2.biglake`
+      OPTIONS (
+      file_format = 'PARQUET',
+      table_format = 'ICEBERG',
+      storage_uri = 'gs://{{ render(vars.GCS_PREFIX) }}/{{ render(vars.DATASET) }}/rentals');

@@ -1,5 +1,5 @@
 id: pagila-bronze-init-full
-namespace: prod.pagila.bronze
+namespace: dev.pagila.bronze
 
 variables:
   DATASET: pagila

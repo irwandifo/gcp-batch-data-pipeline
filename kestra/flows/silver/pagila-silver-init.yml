@@ -1,0 +1,54 @@
+id: pagila-silver-init
+namespace: dev.pagila.silver
+
+variables:
+  DATASET: pagila_silver
+  PROJECT: "{{ secret('GCP_PROJECT') }}"
+  GCS_PREFIX: "gs://{{ secret('GCS_BUCKET') }}/bronze/pagila"
+  TABLES: [
+    "actors", "addresses", "categories", "customers", "films", "inventories", "staffs", "stores", "payments", "rentals"
+    ]
+
+tasks:
+  - id: sync_files
+    type: io.kestra.plugin.git.SyncNamespaceFiles
+    url: https://github.com/irwandifo/gcp-batch-data-pipeline
+    branch: main
+    gitDirectory: kestra/files/silver
+
+  - id: full_refresh
+    type: io.kestra.plugin.core.flow.ForEach
+    values: "{{ render(vars.TABLES) }}"
+    tasks:
+      - id: extract_transform
+        type: io.kestra.plugin.scripts.python.Commands
+        taskRunner:
+          type: io.kestra.plugin.core.runner.Process
+        namespaceFiles:
+          enabled: true
+        env: 
+          GCS_PREFIX: "{{ render(vars.GCS_PREFIX) }}"
+        commands:
+          - python pagila_silver_{{ taskrun.value }}.py
+        outputFiles:
+          - out.parquet
+
+      - id: load
+        type: io.kestra.plugin.core.flow.If
+        condition: "{{ taskrun.value != 'payments' and taskrun.value != 'rentals'}}"
+        then:
+          - id: replace_bigquery_table
+            type: io.kestra.plugin.gcp.bigquery.Load
+            from: "{{ outputs.extract_transform[parent.taskrun.value].outputFiles['out.parquet'] }}"
+            projectId: "{{ render(vars.PROJECT) }}"
+            destinationTable: "{{ render(vars.DATASET) }}.{{ parent.taskrun.value }}"
+            writeDisposition: WRITE_TRUNCATE
+            format: PARQUET
+        else:
+          - id: append_iceberg_table
+            type: io.kestra.plugin.gcp.bigquery.Load
+            from: "{{ outputs.extract_transform[parent.taskrun.value].outputFiles['out.parquet'] }}"
+            projectId: "{{ render(vars.PROJECT) }}"
+            destinationTable: "{{ render(vars.DATASET) }}.{{ parent.taskrun.value }}"
+            writeDisposition: WRITE_APPEND
+            format: PARQUET
