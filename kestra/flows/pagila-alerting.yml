@@ -1,0 +1,26 @@
+id: pagila-alerting
+namespace: dev.pagila
+
+tasks:
+  - id: send_alert
+    type: io.kestra.plugin.notifications.mail.MailExecution
+    from: Kestra <alerting@resend.dev>
+    to: "{{ secret('EMAIL') }}"
+    username: resend
+    password: "{{ secret('RESEND_API_KEY') }}"
+    host: smtp.resend.com
+    port: 465
+    subject: "Run flow failed: {{ trigger.flowId }}"
+    executionId: "{{ trigger.executionId }}"
+
+triggers:
+  - id: failed_workflows
+    type: io.kestra.plugin.core.trigger.Flow
+    conditions:
+      - type: io.kestra.plugin.core.condition.ExecutionStatus
+        in:
+          - FAILED
+          - WARNING
+      - type: io.kestra.plugin.core.condition.ExecutionNamespace
+        namespace: dev.pagila.
+        prefix: true
