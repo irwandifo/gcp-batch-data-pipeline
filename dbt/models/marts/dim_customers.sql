@@ -15,10 +15,7 @@ with
             stg_addresses.district as customer_district,
             stg_addresses.city as customer_city,
             stg_addresses.country as customer_country,
-            stg_customers.is_active as customer_is_active,
-            stg_customers.created_at,
-            stg_customers.updated_at,
-            stg_customers.loaded_at
+            stg_customers.is_active as customer_is_active
         from stg_customers
         left join stg_addresses on stg_customers.address_id = stg_addresses.address_id
     )
