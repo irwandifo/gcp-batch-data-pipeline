@@ -1,0 +1,42 @@
+id: pagila-gold
+namespace: dev.pagila.gold
+
+variables:
+  INPUT: pagila_silver
+  OUTPUT: pagila_gold
+  PROJECT: "{{ secret('GCP_PROJECT') }}"
+
+tasks:
+  - id: sync_files
+    type: io.kestra.plugin.git.SyncNamespaceFiles
+    url: https://github.com/irwandifo/gcp-batch-pipeline
+    branch: main
+    gitDirectory: dbt
+
+  - id: dbt
+    type: io.kestra.plugin.dbt.cli.DbtCLI
+    containerImage: ghcr.io/kestra-io/dbt-bigquery:latest
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    namespaceFiles:
+      enabled: true
+    profiles: |
+      pagila:
+        target: dev
+        outputs:
+          dev:
+            type: bigquery
+            project: "{{ render(vars.PROJECT) }}"
+            dataset: "{{ render(vars.OUTPUT) }}"
+            location: asia-southeast2
+            method: oauth
+            priority: interactive
+            threads: 16
+            timeout_seconds: 300
+            fixed_retries: 1
+    commands:
+      - dbt deps
+      - dbt build 
+    env:
+      DBT_DATABASE: "{{ render(vars.PROJECT) }}"
+      DBT_SCHEMA: "{{ render(vars.INPUT) }}"
