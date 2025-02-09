@@ -1,7 +1,6 @@
 """Utility functions to simplify DuckDB interactions."""
 
 import duckdb
-from os import getenv
 from fsspec import filesystem
 
 
