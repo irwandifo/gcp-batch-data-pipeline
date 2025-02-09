@@ -1,11 +1,9 @@
-import duckdb
+from utils.duckdb_helper import init_duckdb_gcs
 from os import getenv
-from fsspec import filesystem
 
-con = duckdb.connect(":memory:")
-con.register_filesystem(filesystem("gcs"))
 
-GCS_PREFIX = getenv('GCS_PREFIX')
+GCS_PREFIX = getenv("GCS_PREFIX")
+con = init_duckdb_gcs()
 
 con.execute(f"""
   COPY (
