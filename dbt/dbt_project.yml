@@ -15,7 +15,8 @@ clean-targets:
   - "dbt_packages"
 packages-install-path: "dbt_packages"
 models:
-  marts:
-    +materialized: table
+  pagila_gold:
+    marts:
+      +materialized: table
 flags:
   send_anonymous_usage_stats: False
