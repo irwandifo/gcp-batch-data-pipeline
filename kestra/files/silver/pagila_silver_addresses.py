@@ -3,6 +3,7 @@ from os import getenv
 
 
 GCS_PREFIX = getenv("GCS_PREFIX")
+con = init_duckdb_gcs()
 
 con.execute(f"""
   COPY (
