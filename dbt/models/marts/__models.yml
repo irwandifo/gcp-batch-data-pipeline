@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: dim_actors
+  - name: dim_categories
+  - name: dim_dates
+  - name: dim_staffs
+  - name: dim_stores
