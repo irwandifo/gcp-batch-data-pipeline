@@ -16,6 +16,7 @@ models:
           - not_null
           - unique
   - name: dim_actors
+  - name: dim_customers
   - name: dim_categories
   - name: dim_dates
   - name: dim_staffs
