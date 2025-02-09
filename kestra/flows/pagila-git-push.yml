@@ -1,0 +1,24 @@
+id: pagila-git-push
+namespace: dev.pagila
+
+inputs:
+  - id: stage
+    type: STRING
+    displayName: "Stage layer"
+  - id: commit_message
+    type: STRING
+    displayName: "Git commit message"
+
+tasks:
+  - id: git_commit_push
+    type: io.kestra.plugin.git.PushFlows
+    sourceNamespace: "dev.pagila.{{ inputs.stage }}"
+    targetNamespace: "dev.pagila.{{ inputs.stage }}"
+    flows: "*"
+    url: https://github.com/irwandifo/gcp-batch-data-pipeline
+    branch: develop
+    username: irwandifo
+    password: "{{ secret('GITHUB_PAT') }}"
+    commitMessage: "{{ inputs.commit_message }}"
+    gitDirectory: "kestra/flows/{{ inputs.stage }}"
+    dryRun: false
