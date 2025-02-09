@@ -1,6 +1,20 @@
 version: 2
 
 models:
+  - name: fact_rentals
+    columns:
+      - name: rental_id
+        description: The unique key of the rentals fact table.
+        data_tests:
+          - not_null
+          - unique
+  - name: fact_payments
+    columns:
+      - name: payment_id
+        description: The unique key of the payments fact table.
+        data_tests:
+          - not_null
+          - unique
   - name: dim_actors
   - name: dim_categories
   - name: dim_dates
