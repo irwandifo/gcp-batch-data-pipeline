@@ -17,6 +17,6 @@ packages-install-path: "dbt_packages"
 models:
   pagila_gold:
     marts:
-      +materialized: table
+      +materialized: view
 flags:
   send_anonymous_usage_stats: False
