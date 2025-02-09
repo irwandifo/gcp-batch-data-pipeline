@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: pagila_silver
+    description: Pagila silver layer
+    database: "{{ env_var('DBT_DATABASE') }}"
+    schema: "{{ env_var('DBT_SCHEMA') }}"
+    tables:
+      - name: actors
+      - name: addresses
+      - name: categories
+      - name: customers
+      - name: films
+      - name: inventories
+      - name: staffs
+      - name: stores
+      - name: payments
+      - name: rentals
