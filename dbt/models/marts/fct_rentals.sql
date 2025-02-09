@@ -25,7 +25,7 @@ with
 
         {% if is_incremental() %}
   
-          where date(event_timestamp) >= date_sub(date(_dbt_max_partition), interval 1 day)
+          where date(rented_at) >= date_sub(date(_dbt_max_partition), interval 1 day)
   
         {% endif %}
     )
