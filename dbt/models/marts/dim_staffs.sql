@@ -7,8 +7,8 @@ with
     staffs as (
         select
             {{ dbt_utils.generate_surrogate_key(["stg_staffs.staff_id"]) }} as staff_sk,
-            stg_staffs.staff_id as staff_nk,
             {{ dbt_utils.generate_surrogate_key(["stg_staffs.store_id"]) }} as store_sk,
+            stg_staffs.staff_id as staff_nk,
             stg_staffs.name as staff_name,
             stg_staffs.email as staff_email,
             stg_addresses.phone as staff_phone,
