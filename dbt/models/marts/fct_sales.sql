@@ -15,7 +15,7 @@ with
             stg_payments.payment_id as sales_nk,
             stg_payments.rental_id as rental_nk,
             stg_payments.amount as sales_amount,
-            stg_payments.paid_at
+            stg_payments.paid_at,
             stg_rentals.rented_at,
             stg_rentals.returned_at
         from stg_payments
