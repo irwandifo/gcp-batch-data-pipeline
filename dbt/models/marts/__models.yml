@@ -1,17 +1,10 @@
 version: 2
 
 models:
-  - name: fct_rentals
+  - name: fct_sales
     columns:
-      - name: rental_id
-        description: The unique key of the rentals fact table.
-        data_tests:
-          - not_null
-          - unique
-  - name: fct_payments
-    columns:
-      - name: payment_id
-        description: The unique key of the payments fact table.
+      - name: sales_sk
+        description: The unique key of the sales fact table.
         data_tests:
           - not_null
           - unique
