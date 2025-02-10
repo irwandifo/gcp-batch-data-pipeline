@@ -11,7 +11,7 @@ with
             {{ dbt_utils.generate_surrogate_key(["stg_rentals.inventory_id"]) }} as inventory_sk,
             {{ dbt_utils.generate_surrogate_key(["stg_payments.customer_id"]) }} as customer_sk,
             {{ dbt_utils.generate_surrogate_key(["stg_payments.staff_id"]) }} as staff_sk,
-            {{{ dbt_utils.generate_surrogate_key(["stg_inventories.store_id"]) }} as store_sk,
+            {{ dbt_utils.generate_surrogate_key(["stg_inventories.store_id"]) }} as store_sk,
             stg_payments.payment_id as sales_nk,
             stg_payments.rental_id as rental_nk,
             stg_payments.amount as sales_amount,
