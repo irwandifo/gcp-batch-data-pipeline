@@ -6,8 +6,8 @@ with
     customers as (
         select
             {{ dbt_utils.generate_surrogate_key(["stg_customers.customer_id"]) }} as customer_sk,
-            stg_customers.customer_id as customer_nk,
             {{ dbt_utils.generate_surrogate_key(["stg_customers.store_id"]) }} as store_sk,
+            stg_customers.customer_id as customer_nk,
             stg_customers.name as customer_name,
             stg_customers.email as customer_email,
             stg_addresses.phone as customer_phone,
