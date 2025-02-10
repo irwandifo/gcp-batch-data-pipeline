@@ -20,7 +20,7 @@ with
             stg_rentals.returned_at
         from stg_payments
         left join stg_rentals on stg_payments.rental_id = stg_rentals.rental_id
-        left join stg_inventories on stg_payments.inventory_id = stg_inventories.inventory_id
+        left join stg_inventories on stg_rentals.inventory_id = stg_inventories.inventory_id
     )
 
 select *
