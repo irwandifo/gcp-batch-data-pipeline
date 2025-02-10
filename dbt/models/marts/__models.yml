@@ -8,10 +8,17 @@ models:
         data_tests:
           - not_null
           - unique
+          
   - name: dim_actors
+  
   - name: dim_customers
+  
   - name: dim_categories
+  
   - name: dim_dates
+  
   - name: dim_inventories
+  
   - name: dim_staffs
+  
   - name: dim_stores
