@@ -18,4 +18,4 @@ This project implements data pipeline for small-to-medium-scale data platform on
 
 ## Architecture Diagram
 
-![](img/gcp-batch-diagram.png)
+![](https://github.com/irwandifo/gcp-batch-infra/blob/main/img/gcp-batch-diagram.png)
