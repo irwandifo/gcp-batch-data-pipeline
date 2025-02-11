@@ -12,29 +12,37 @@ models:
   - name: dim_actors
   
   - name: dim_customers
-    data_tests:
-      - relationships:
-          to: ref('fct_sales')
-          field: customer_sk
+    columns:
+      - name: customer_sk
+        data_tests:
+          - relationships:
+              to: ref('fct_sales')
+              field: customer_sk
   
   - name: dim_categories
   
   - name: dim_dates
   
   - name: dim_inventories
-    data_tests:
-      - relationships:
-          to: ref('fct_sales')
-          field: inventory_sk
+    columns:
+      - name: inventory_sk
+        data_tests:
+          - relationships:
+              to: ref('fct_sales')
+              field: inventory_sk
   
   - name: dim_staffs
-    data_tests:
-      - relationships:
-          to: ref('fct_sales')
-          field: staff_sk
+    columns:
+      - name: staff_sk
+        data_tests:
+          - relationships:
+              to: ref('fct_sales')
+              field: staff_sk
   
   - name: dim_stores
-    data_tests:
-      - relationships:
-          to: ref('fct_sales')
-          field: store_sk
+    columns:
+      - name: store_sk
+        data_tests:
+          - relationships:
+              to: ref('fct_sales')
+              field: store_sk
