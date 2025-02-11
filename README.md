@@ -15,3 +15,7 @@ This project implements data pipeline for small-to-medium-scale data platform on
 | Alerting               | Resend                                  | Sends email notifications for issues.     |
 | Consumption            | BigQuery                                | Data consumption layer.                   |
 | Analytics              | Looker Studio and Evidence              | Analytics and visualizations layer.       |
+
+## Data Flow
+
+![](img/gcp-batch-diagram.png)
