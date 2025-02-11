@@ -16,6 +16,6 @@ This project implements data pipeline for small-to-medium-scale data platform on
 | Consumption            | BigQuery                                | Data consumption layer.                   |
 | Analytics              | Looker Studio and Evidence              | Analytics and visualizations layer.       |
 
-## Data Flow
+## Architecture Diagram
 
 ![](img/gcp-batch-diagram.png)
