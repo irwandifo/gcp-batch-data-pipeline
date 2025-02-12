@@ -2,8 +2,6 @@ snapshots:
   - name: customers_snapshot
     relation: source("pagila_silver", "customers")
     config:
-      database: "{{ env_var('DBT_DATABASE') }}"
-      schema: "{{ env_var('DBT_SCHEMA') }}"
       unique_key: customer_id
       strategy: timestamp
       updated_at: updated_at
