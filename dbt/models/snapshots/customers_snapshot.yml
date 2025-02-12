@@ -1,8 +1,0 @@
-snapshots:
-  - name: customers_snapshot
-    relation: source("pagila_silver", "customers")
-    config:
-      unique_key: customer_id
-      strategy: timestamp
-      updated_at: updated_at
-      dbt_valid_to_current: "9999-12-31"
