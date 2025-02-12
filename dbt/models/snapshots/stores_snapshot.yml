@@ -1,0 +1,10 @@
+snapshots:
+  - name: stores_snapshot
+    relation: source("pagila_silver", "stores")
+    config:
+      database: "{{ env_var('DBT_DATABASE') }}"
+      schema: "{{ env_var('DBT_SCHEMA') }}"
+      unique_key: store_id
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: "to_date('9999-12-31')"
